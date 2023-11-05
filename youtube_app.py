@@ -85,5 +85,40 @@ def get_results(df_video, threshold=5000):
     return results
 
 st.title('Youtube分析アプリ')
-df_video = video_search(youtube, q='Python 自動化', max_results=50)
-results = get_results(df_video, threshold=1000)
+
+st.sidebar.write('## クエリと閾値の設定')
+st.sidebar.write('### クエリの入力')
+
+query=st.sidebar.text_input('検索クエリを入力してください','Python 自動化')
+
+st.sidebar.write('### 閾値の設定')
+threshold=st.sidebar.slider('登録者数の閾値',100,50000,20000)
+
+
+st.write('### 選択中のパラメータ')
+st.markdown(f"""
+- 検索クエリ：{query}
+- 登録者数の閾値：{threshold}
+""")
+
+st.write('### 分析結果')
+with st.spinner('Wait for it...'):
+    df_video = video_search(youtube, q=query, max_results=50)
+    results = get_results(df_video, threshold=threshold)
+    if results.empty:
+        st.warning('条件に当てはまる動画が存在しません')
+    else:
+        st.dataframe(results)
+
+st.write('### 動画再生')
+video_id=st.text_input('動画idを入力してください')
+url =f'https://youtu.be/{video_id}'
+
+video_field = st.empty()
+video_field.write('こちらに動画が表示されます')
+if st.button('ビデオ表示'):
+    if len(video_id) > 0:
+        try:
+            video_field.video(url)
+        except:
+            st.error('この動画は存在しません')
