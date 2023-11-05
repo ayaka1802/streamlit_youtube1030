@@ -84,5 +84,6 @@ def get_results(df_video, threshold=5000):
 
     return results
 
+st.title('Youtube分析アプリ')
 df_video = video_search(youtube, q='Python 自動化', max_results=50)
 results = get_results(df_video, threshold=1000)
